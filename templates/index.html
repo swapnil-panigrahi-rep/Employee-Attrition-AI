@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AttritionAI — Employee Attrition Prediction</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <a href="#home" class="logo">AttritionAI</a>
+    <ul>
+      <li><a href="#home">Home</a></li>
+      <li><a href="#prediction">Prediction</a></li>
+      <li><a href="#model">Model</a></li>
+      <li><a href="#about">About</a></li>
+    </ul>
+    <span class="nav-version">v1.0 &middot; RF Classifier</span>
+  </nav>
+
+  <!-- HERO -->
+  <section id="home" class="hero">
+    <div class="hero-inner">
+      <div class="hero-left">
+        <p class="hero-eyebrow">IBM HR Analytics &middot; Machine Learning</p>
+        <h1>Employee Attrition<br><em>Prediction</em></h1>
+        <p class="hero-desc">
+          An ML-powered tool to identify employees at risk of leaving — 
+          using a Random Forest Classifier trained on IBM's HR dataset.
+        </p>
+        <a href="#prediction" class="hero-cta">Run a Prediction &rarr;</a>
+      </div>
+      <div class="hero-right">
+        <div class="hero-card">
+          <div class="metric-row">
+            <span class="metric-label">Model Accuracy</span>
+            <span class="metric-value">86.73%</span>
+          </div>
+          <div class="metric-divider"></div>
+          <div class="metric-row">
+            <span class="metric-label">Algorithm</span>
+            <span class="metric-value mono">RandomForest</span>
+          </div>
+          <div class="metric-divider"></div>
+          <div class="metric-row">
+            <span class="metric-label">Train / Test Split</span>
+            <span class="metric-value">80 / 20</span>
+          </div>
+          <div class="metric-divider"></div>
+          <div class="metric-row">
+            <span class="metric-label">Dataset</span>
+            <span class="metric-value">IBM HR Analytics</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PREDICTION SECTION -->
+  <section id="prediction" class="prediction-section">
+    <div class="section-header">
+      <span class="section-index">01</span>
+      <h2>Prediction Engine</h2>
+      <p>Enter employee details to get an attrition risk assessment.</p>
+    </div>
+
+    <div class="form-wrap">
+      <form action="/predict" method="post" class="pred-form">
+
+        <div class="field-group two-col">
+          <div class="field">
+            <label for="Age">Age</label>
+            <input type="number" id="Age" name="Age" placeholder="34" required>
+          </div>
+          <div class="field">
+            <label for="MonthlyIncome">Monthly Income <span class="field-unit">USD</span></label>
+            <input type="number" id="MonthlyIncome" name="MonthlyIncome" placeholder="5000" required>
+          </div>
+        </div>
+
+        <div class="field-group two-col">
+          <div class="field">
+            <label for="YearsAtCompany">Years at Company</label>
+            <input type="number" id="YearsAtCompany" name="YearsAtCompany" placeholder="5" required>
+          </div>
+          <div class="field">
+            <label for="JobSatisfaction">Job Satisfaction <span class="field-unit">1–4</span></label>
+            <select id="JobSatisfaction" name="JobSatisfaction">
+              <option value="1">1 — Very Dissatisfied</option>
+              <option value="2">2 — Dissatisfied</option>
+              <option value="3">3 — Satisfied</option>
+              <option value="4">4 — Very Satisfied</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <div class="field">
+            <label for="JobRole">Job Role</label>
+            <select id="JobRole" name="JobRole">
+              <option value="Sales Executive">Sales Executive</option>
+              <option value="Research Scientist">Research Scientist</option>
+              <option value="Laboratory Technician">Laboratory Technician</option>
+              <option value="Manager">Manager</option>
+              <option value="Manufacturing Director">Manufacturing Director</option>
+              <option value="Healthcare Representative">Healthcare Representative</option>
+              <option value="Human Resources">Human Resources</option>
+              <option value="Research Director">Research Director</option>
+              <option value="Sales Representative">Sales Representative</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-group two-col">
+          <div class="field">
+            <label for="OverTime">Overtime</label>
+            <select id="OverTime" name="OverTime">
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="BusinessTravel">Business Travel</label>
+            <select id="BusinessTravel" name="BusinessTravel">
+              <option value="Travel_Rarely">Rarely</option>
+              <option value="Travel_Frequently">Frequently</option>
+              <option value="Non-Travel">None</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" class="submit-btn">Predict Attrition Risk</button>
+      </form>
+
+      {% if prediction %}
+      <div class="result-block">
+        <div class="result-meta">
+          <span class="mono">MODEL OUTPUT</span>
+          <span class="result-indicator"></span>
+        </div>
+        <div class="result-output">
+          <span class="prediction">{{ prediction }}</span>
+        </div>
+        <p class="result-disclaimer">Result is generated by the trained model. Use alongside qualitative HR judgment.</p>
+      </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- MODEL INFO -->
+  <section id="model" class="model-section">
+    <div class="section-header">
+      <span class="section-index">02</span>
+      <h2>Model Details</h2>
+      <p>Technical specifications of the trained classifier.</p>
+    </div>
+
+    <div class="model-wrap">
+      <table class="model-table">
+        <tbody>
+          <tr>
+            <td class="t-key">Algorithm</td>
+            <td class="t-val">Random Forest Classifier</td>
+          </tr>
+          <tr>
+            <td class="t-key">Training Dataset</td>
+            <td class="t-val">IBM HR Analytics Employee Attrition</td>
+          </tr>
+          <tr>
+            <td class="t-key">Train / Test Split</td>
+            <td class="t-val">80% training &middot; 20% testing</td>
+          </tr>
+          <tr>
+            <td class="t-key">Accuracy</td>
+            <td class="t-val accent-val">86.73%</td>
+          </tr>
+          <tr>
+            <td class="t-key">Input Features</td>
+            <td class="t-val">7 &mdash; Age, Income, Role, Overtime, Travel, Satisfaction, Tenure</td>
+          </tr>
+          <tr>
+            <td class="t-key">Output Classes</td>
+            <td class="t-val">Binary &mdash; Attrition: Yes / No</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <aside class="model-note">
+        <p>
+          The IBM HR Analytics dataset contains records for 1,470 employees 
+          across 35 features. This implementation uses 7 key predictors 
+          selected through feature importance analysis. The Random Forest 
+          ensemble averages predictions across multiple decision trees to 
+          reduce overfitting and improve generalization.
+        </p>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" class="about-section">
+    <div class="section-header">
+      <span class="section-index">03</span>
+      <h2>About</h2>
+      <p>What this project is and why it was built.</p>
+    </div>
+
+    <div class="about-wrap">
+      <div class="about-text">
+        <p>
+          AttritionAI is an AIML course project applying supervised machine learning 
+          to HR analytics. The goal is to give organizations a data-backed signal 
+          when identifying employees who may be considering leaving — allowing HR 
+          teams to intervene proactively.
+        </p>
+        <p>
+          Built with Python's Scikit-Learn and served via Flask. No external APIs 
+          or cloud ML services are used — the classifier runs entirely server-side.
+        </p>
+      </div>
+      <div class="stack-list">
+        <div class="stack-item">
+          <span class="stack-key">Language</span>
+          <span class="stack-val mono">Python 3</span>
+        </div>
+        <div class="stack-item">
+          <span class="stack-key">Framework</span>
+          <span class="stack-val mono">Flask</span>
+        </div>
+        <div class="stack-item">
+          <span class="stack-key">ML Library</span>
+          <span class="stack-val mono">Scikit-Learn</span>
+        </div>
+        <div class="stack-item">
+          <span class="stack-key">Dataset</span>
+          <span class="stack-val mono">IBM HR Analytics</span>
+        </div>
+        <div class="stack-item">
+          <span class="stack-key">Course</span>
+          <span class="stack-val mono">AIML Project</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <span class="footer-logo">AttritionAI</span>
+    <span class="footer-copy">Employee Attrition Prediction &middot; AIML Project</span>
+  </footer>
+
+</body>
+</html>
